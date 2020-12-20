@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventool", "Eventool\Eventool.csproj", "{4ADF9D4A-F5E5-4AD7-BB60-AD0EE8AE3C25}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventool", "Eventool\Eventool.csproj", "{4ADF9D4A-F5E5-4AD7-BB60-AD0EE8AE3C25}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventool.Domain", "Eventool.Domain\Eventool.Domain.csproj", "{80CC6BF5-F9C8-4187-A11D-6E03B63389E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Eventool.Db", "Eventool.Db\Eventool.Db.csproj", "{00877972-AB15-48B4-9AB1-20C63237F9DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventool.Console", "Eventool.Cmd\Eventool.Console.csproj", "{87378E1E-7E4D-47D5-97D1-F2A18747D04A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{4ADF9D4A-F5E5-4AD7-BB60-AD0EE8AE3C25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4ADF9D4A-F5E5-4AD7-BB60-AD0EE8AE3C25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4ADF9D4A-F5E5-4AD7-BB60-AD0EE8AE3C25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80CC6BF5-F9C8-4187-A11D-6E03B63389E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80CC6BF5-F9C8-4187-A11D-6E03B63389E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80CC6BF5-F9C8-4187-A11D-6E03B63389E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80CC6BF5-F9C8-4187-A11D-6E03B63389E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00877972-AB15-48B4-9AB1-20C63237F9DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00877972-AB15-48B4-9AB1-20C63237F9DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00877972-AB15-48B4-9AB1-20C63237F9DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00877972-AB15-48B4-9AB1-20C63237F9DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87378E1E-7E4D-47D5-97D1-F2A18747D04A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87378E1E-7E4D-47D5-97D1-F2A18747D04A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87378E1E-7E4D-47D5-97D1-F2A18747D04A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87378E1E-7E4D-47D5-97D1-F2A18747D04A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
