@@ -24,6 +24,40 @@ namespace Eventool.Controllers
             return View(await _context.Events.ToListAsync());
         }
 
+        // GET: Events/Reservation
+        [Authorize]
+        public async Task<IActionResult> Reserve(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+            var @event = await _context.Events.Include(m => m.Platform).Include(m => m.Organization)
+                .FirstOrDefaultAsync(m => m.Id == id);
+           
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+            var recerv = await _context.Reservations.Include(m => m.EventEntity).Include(m => m.Visitor)
+             .FirstOrDefaultAsync(m => m.EventEntityId == id && m.VisitorId == userId);
+            var freePlaces = @event.Platform.Capacity - (await _context.Reservations.Where(r => r.EventEntityId == @event.Id).CountAsync());
+            if (recerv == null)
+            {
+                var reservetion = new Reservation
+                {
+                    VisitorId = userId,
+                    EventEntityId = (int)id
+                };
+                _context.Reservations.Add(reservetion);
+                await _context.SaveChangesAsync();
+                ViewData["result"] = $"You have been successfully registered to the {@event.Name}!";
+                ViewData["ticket"] = $"Your ticket is: {userId + id}";
+                return View();
+            }
+            ViewData["result"] = $"You already have been registered to the {@event.Name}!";
+            ViewData["ticket"] = $"Your ticket is: {userId + id}";
+            return View();
+        }
+
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
