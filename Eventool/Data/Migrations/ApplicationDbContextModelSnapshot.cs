@@ -19,7 +19,7 @@ namespace Eventool.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
-            modelBuilder.Entity("Eventool.Models.Event", b =>
+            modelBuilder.Entity("Eventool.Models.EventEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,6 +131,21 @@ namespace Eventool.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PlatformTypes");
+                });
+
+            modelBuilder.Entity("Eventool.Models.Reservation", b =>
+                {
+                    b.Property<int>("EventEntityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VisitorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EventEntityId", "VisitorId");
+
+                    b.HasIndex("VisitorId");
+
+                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -329,7 +344,7 @@ namespace Eventool.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Eventool.Models.Event", b =>
+            modelBuilder.Entity("Eventool.Models.EventEntity", b =>
                 {
                     b.HasOne("Eventool.Models.Organization", "Organization")
                         .WithMany()
@@ -372,6 +387,25 @@ namespace Eventool.Data.Migrations
                     b.Navigation("Admin");
 
                     b.Navigation("Type");
+                });
+
+            modelBuilder.Entity("Eventool.Models.Reservation", b =>
+                {
+                    b.HasOne("Eventool.Models.EventEntity", "EventEntity")
+                        .WithMany()
+                        .HasForeignKey("EventEntityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Visitor")
+                        .WithMany()
+                        .HasForeignKey("VisitorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EventEntity");
+
+                    b.Navigation("Visitor");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
