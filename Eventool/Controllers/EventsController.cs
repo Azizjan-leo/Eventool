@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Eventool.Data;
 using Eventool.Models;
@@ -35,8 +32,9 @@ namespace Eventool.Controllers
                 return NotFound();
             }
 
-            var @event = await _context.Events
+            var @event = await _context.Events.Include(m => m.Platform).Include(m => m.Organization)
                 .FirstOrDefaultAsync(m => m.Id == id);
+            ViewData["freePlaces"] = @event.Platform.Capacity - (await _context.Reservations.Where(r => r.EventEntityId == @event.Id).CountAsync());
             if (@event == null)
             {
                 return NotFound();
@@ -56,8 +54,6 @@ namespace Eventool.Controllers
         }
 
         // POST: Events/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Platform,Organization,Name,From,To")] CreateEventVM vm)
@@ -69,7 +65,7 @@ namespace Eventool.Controllers
                 var organization = await _context.Organizations.FindAsync(vm.Organization);
                 var platform = await _context.Platforms.FindAsync(vm.Platform);
 
-                var @event = new Event
+                var @event = new EventEntity
                 {
                     Name = vm.Name,
                     Organization = organization,
@@ -101,11 +97,9 @@ namespace Eventool.Controllers
         }
 
         // POST: Events/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,From,To")] Event @event)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,From,To")] EventEntity @event)
         {
             if (id != @event.Id)
             {

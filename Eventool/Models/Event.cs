@@ -10,7 +10,7 @@ namespace Eventool.Models
         public DateTime From { get; set; }
         public DateTime To { get; set; }
     }
-    public class Event
+    public class EventEntity
     {
         public int Id { get; set; }
         public string Name { get; set; }

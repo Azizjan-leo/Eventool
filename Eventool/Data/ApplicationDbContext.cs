@@ -14,10 +14,15 @@ namespace Eventool.Data
         public DbSet<Platform> Platforms { get; set; }
         public DbSet<OrganizationType> OrganizationTypes { get; set; }
         public DbSet<Organization> Organizations { get; set; }
-        public DbSet<Event> Events { get; set; }
+        public DbSet<EventEntity> Events { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
-        {            
+        {
+            builder.Entity<Reservation>().HasKey(table => new {
+                table.EventEntityId,
+                table.VisitorId
+            });
             base.OnModelCreating(builder);  
         }
     }
