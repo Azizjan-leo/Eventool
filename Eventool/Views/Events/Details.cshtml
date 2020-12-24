@@ -31,7 +31,7 @@
 <div>
     @if (placelft > 0)
     {
-        <a asp-action="Reserve" asp-route-id="@Model.Id">Reserve</a> 
+        <a asp-controller="Events" asp-action="Reserve" asp-route-id="@Model.Id">Reserve</a> 
     }
 
     <a asp-action="Index">Back to List</a>
