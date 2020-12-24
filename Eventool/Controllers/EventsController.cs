@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Eventool.Data;
 using Eventool.Models;
@@ -9,24 +12,22 @@ using System.Security.Claims;
 
 namespace Eventool.Controllers
 {
-    [Authorize]
-    public class OrganizationsController : Controller
+    public class EventsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public OrganizationsController(ApplicationDbContext context)
+        public EventsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-
-        // GET: Organizations
+        // GET: Events
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Organizations.ToListAsync());
+            return View(await _context.Events.ToListAsync());
         }
 
-        // GET: Organizations/Details/5
+        // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,52 +35,56 @@ namespace Eventool.Controllers
                 return NotFound();
             }
 
-            var organization = await _context.Organizations
+            var @event = await _context.Events
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (organization == null)
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(organization);
+            return View(@event);
         }
 
-        // GET: Organizations/Create
+        // GET: Events/Create
+        [Authorize]
         public async Task<IActionResult> Create()
         {
-            ViewData["types"] = await _context.OrganizationTypes.ToListAsync();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ViewData["organizations"] = await _context.Organizations.Where(x=>x.Admin.Id == userId).ToListAsync();
+            ViewData["platforms"] = await _context.Platforms.ToListAsync();
             return View();
         }
 
-        // POST: Organizations/Create
+        // POST: Events/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Type")] CreateOrganizationVM vm)
+        public async Task<IActionResult> Create([Bind("Platform,Organization,Name,From,To")] CreateEventVM vm)
         {
             if (ModelState.IsValid)
             {
                 var userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 var user = await _context.Users.Where(x => x.Id == userId).FirstOrDefaultAsync();
-                var type = await _context.OrganizationTypes.FindAsync(vm.Type);
+                var organization = await _context.Organizations.FindAsync(vm.Organization);
+                var platform = await _context.Platforms.FindAsync(vm.Platform);
 
-                var organization = new Organization
+                var @event = new Event
                 {
                     Name = vm.Name,
-                    Type = type,
-                    Admin = user
+                    Organization = organization,
+                    Platform = platform,
+                    From = vm.From,
+                    To = vm.To
                 };
-
-                _context.Add(organization);
+                _context.Add(@event);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(vm);
         }
 
-        // GET: Organizations/Edit/5
+        // GET: Events/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,22 +92,22 @@ namespace Eventool.Controllers
                 return NotFound();
             }
 
-            var organization = await _context.Organizations.FindAsync(id);
-            if (organization == null)
+            var @event = await _context.Events.FindAsync(id);
+            if (@event == null)
             {
                 return NotFound();
             }
-            return View(organization);
+            return View(@event);
         }
 
-        // POST: Organizations/Edit/5
+        // POST: Events/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Organization organization)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,From,To")] Event @event)
         {
-            if (id != organization.Id)
+            if (id != @event.Id)
             {
                 return NotFound();
             }
@@ -111,12 +116,12 @@ namespace Eventool.Controllers
             {
                 try
                 {
-                    _context.Update(organization);
+                    _context.Update(@event);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OrganizationExists(organization.Id))
+                    if (!EventExists(@event.Id))
                     {
                         return NotFound();
                     }
@@ -127,10 +132,10 @@ namespace Eventool.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(organization);
+            return View(@event);
         }
 
-        // GET: Organizations/Delete/5
+        // GET: Events/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,32 +143,30 @@ namespace Eventool.Controllers
                 return NotFound();
             }
 
-            var organization = await _context.Organizations
+            var @event = await _context.Events
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (organization == null)
+            if (@event == null)
             {
                 return NotFound();
             }
 
-            return View(organization);
+            return View(@event);
         }
 
-        // POST: Organizations/Delete/5
+        // POST: Events/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var organization = await _context.Organizations.FindAsync(id);
-            _context.Organizations.Remove(organization);
+            var @event = await _context.Events.FindAsync(id);
+            _context.Events.Remove(@event);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OrganizationExists(int id)
+        private bool EventExists(int id)
         {
-            return _context.Organizations.Any(e => e.Id == id);
+            return _context.Events.Any(e => e.Id == id);
         }
     }
-
-   
 }
